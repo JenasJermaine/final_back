@@ -11,14 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
-    public function getUser()
-    {
-        // Get the authenticated user
-        $user = Auth::user();
-
-        // Return the user data as JSON
-        return response()->json($user);
-    }
 
     /**
      * Display a listing of the resource.
@@ -76,8 +68,8 @@ class RegisterController extends Controller
                 'status' => 'success',
                 'message' => 'User registered successfully.'
             ], 201);
-
-        } catch (\Exception $e) {
+        } 
+        catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while registering the user.'
@@ -104,9 +96,47 @@ class RegisterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $user = dd(Auth::user());
+
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'user_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Update user data
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Handle the profile picture upload
+        if ($request->hasFile('user_pic')) {
+            $path = $request->file('user_pic')->store('user_pics', 'public');
+            $user->user_pic = $path;
+        }
+
+        // Save the user
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+        ], 200);
     }
 
     /**
@@ -117,4 +147,3 @@ class RegisterController extends Controller
         //
     }
 }
-
