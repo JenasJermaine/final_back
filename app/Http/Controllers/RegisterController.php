@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
 
+
     /**
      * Display a listing of the resource.
      */
@@ -33,12 +34,11 @@ class RegisterController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate input
         $validator = Validator::make($request->all(), [
             'user_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed', // Ensure confirmation field is present in the request
+            'password' => 'required|string|min:8|confirmed', 
         ]);
 
         if ($validator->fails()) {
@@ -52,13 +52,13 @@ class RegisterController extends Controller
 
         if ($request->hasFile('user_pic')) {
             $path = $request->file('user_pic')->store('user_pics', 'public');
-            $data['user_pic'] = $path;  // Save the path here
+            $data['user_pic'] = $path;  
         }
 
         try {
             // Create and save the user
             User::create([
-                'user_pic' => $data['user_pic'] ?? null,  // Use null if no image is uploaded
+                'user_pic' => $data['user_pic'] ?? null,  
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
@@ -115,7 +115,6 @@ class RegisterController extends Controller
             ], 422);
         }
 
-        // Update user data
         $user->name = $request->name;
         $user->email = $request->email;
 
@@ -123,13 +122,11 @@ class RegisterController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        // Handle the profile picture upload
         if ($request->hasFile('user_pic')) {
             $path = $request->file('user_pic')->store('user_pics', 'public');
             $user->user_pic = $path;
         }
 
-        // Save the user
         $user->save();
 
         return response()->json([

@@ -23,7 +23,6 @@ class HouseController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
         $validatedData = $request->validate([
             'photos' => 'array',
             'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -54,9 +53,9 @@ class HouseController extends Controller
             }
         }
 
-        // Create the house record
+ 
         $house = House::create([
-            'photoPaths' => $photoPaths, // Store photo paths as JSON
+            'photoPaths' => $photoPaths, 
             'homeType' => $validatedData['homeType'],
             'noFloors' => $validatedData['noFloors'],
             'noBedrooms' => $validatedData['noBedrooms'],
@@ -71,7 +70,7 @@ class HouseController extends Controller
             'price' => $validatedData['price'],
             'email' => $validatedData['email'],
             'phoneNumber' => $validatedData['phoneNumber'],
-            'county' => $validatedData['county'],    // Save location data
+            'county' => $validatedData['county'],   
             'coordinates' => $validatedData['coordinates'],
         ]);
 

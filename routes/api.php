@@ -15,7 +15,7 @@ Route::post('/agent', [AgentController::class, 'store']);
 Route::get('/postedagent', [AgentController::class, 'index']);
 Route::get('/agent/{id}', [AgentController::class, 'show']);
 Route::middleware('auth:api')->get('/user', [RegisterController::class, 'getUser']);
-Route::put('/user/update', [RegisterController::class, 'update']);
+Route::put('/users', [RegisterController::class, 'update']);
 
 
 

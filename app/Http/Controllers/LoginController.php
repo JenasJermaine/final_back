@@ -29,13 +29,13 @@ class LoginController extends Controller
      */
     public function check(Request $request)
     {
-        // Validate input
+   
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        // Attempt to log in the user
+     
         if (Auth::attempt($validated)) {
             return response()->json([
                 'status' => true,
@@ -43,11 +43,10 @@ class LoginController extends Controller
             ]);
         }
 
-        // Return an error response if authentication fails
         return response()->json([
             'status' => false,
             'message' => 'Invalid credentials',
-        ], 401); // 401 Unauthorized status code
+        ], 401);
     }
 
     /**
